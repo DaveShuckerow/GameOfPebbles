@@ -14,7 +14,7 @@ class Board(object):
     """
 
     def __init__(self, n, p):
-        _squares = [[p for _ in range(2)] for _ in range(n)]
+        self.squares = [[p for _ in range(2)] for _ in range(n)]
         pass
 
     def move(self):
