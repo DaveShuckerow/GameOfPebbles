@@ -14,14 +14,18 @@ class Board(object):
     """
 
     def __init__(self, n, p):
+        self._squareCount, self._pebbleCount = n, p
         self.squares = [[p for _ in range(2)] for _ in range(n)]
-        pass
 
     def move(self):
         """ Performs a move on the selected square. """
         pass
 
-    # TODO: add copy method.
+    def copy(self):
+        """ Return a deep copy of the Board for simulation/lookahead"""
+        copyBoard = Board(self._squareCount, self._pebbleCount)
+        copyBoard.squares = [list(row) for row in self.squares]
+        return copyBoard
 
     def get_score(self, player):
         """
