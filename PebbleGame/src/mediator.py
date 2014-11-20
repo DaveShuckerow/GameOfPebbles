@@ -17,4 +17,13 @@ class Mediator:
 	Stub for now.
 	"""
 	def __init__(self):
-		board = Board()
+		self.board = Board(2,2)
+
+	def main(self):
+		pass
+
+	def setState(self):
+		pass
+
+if __name__ == '__main__':
+	Mediator().main()
