@@ -5,15 +5,17 @@ Placeholder for a more advanced renderer.
 
 class Renderer:
     def __init__(self, board):
+        pass
+    def moveEvent(self, board, playerNumber):
         self.draw(board)
-    def moveEvent(self, board):
+        print("Player {}'s turn.".format(playerNumber))
+    def victoryEvent(self, board, playerNumber):
         self.draw(board)
-    def victoryEvent(self, board):
-        self.draw(board)
+        print("Player {} wins!".format(playerNumber))
     def draw(self, board):
         length = len(board.squares[0])
-        split = "#"*(2+length*2)
+        split = "#"*(1+length*4)
         for row in board.squares:
             print(split)
-            print('#'+'#'.join(map(str,row))+'#')
+            print('# '+' # '.join(map(str,row))+' #')
         print(split)
