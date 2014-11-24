@@ -19,8 +19,8 @@ class Board(object):
         self.squares = [[p for _ in range(2)] for _ in range(n)]
 
     def move(self, playerNumber, squareNumber):
-        """
-        Performs a move on the selected square.
+        """Performs a move on the selected square.
+        
         Return whether the move is legal.
         """
         row, col = playerNumber, squareNumber
