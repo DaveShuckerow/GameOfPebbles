@@ -19,16 +19,14 @@ class Board(object):
         self.pebbles = 0
 
     def move(self, row, col):
-        """ Performs a move on the selected square.
-        :param col: the column from which pebbles should be moved
-        :param row: the row from which pebbles should be moved
-        """
+        """ Performs a move on the selected square described in row, column"""
+        # TODO: add check for valid row, col
         self.pebbles = self.squares[row][col]
         self.squares[row][col] = 0
 
         while self.pebbles > 0:
             # If end of row 0 has been reached
-            if col == self._squareCount-1 and row == 0:
+            if col == self._squareCount - 1 and row == 0:
                 row = 1
             # If beginning of row 1 has been reached
             elif col == 0 and row == 1:
@@ -48,7 +46,4 @@ class Board(object):
         return copy_board
 
     def get_score(self, player):
-        """
-        :param player:
-        """
         pass

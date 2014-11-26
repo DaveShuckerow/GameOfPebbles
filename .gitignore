@@ -186,6 +186,7 @@ FakesAssemblies/
 # Specific for AI project
 *.sln
 *.pyproj
+*.pyc
 *.xml
 *.iml
 *.sublime-project

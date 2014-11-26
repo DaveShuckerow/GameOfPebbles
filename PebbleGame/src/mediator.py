@@ -1,38 +1,31 @@
 '''
 Mediator.py
 by: David Shuckerow (djs0017@auburn.edu) and Carlos Lemus (cal0018@auburn.edu)
-date: 11/19/2014
-
-The Mediator class implements the mediator design pattern.
-It is responsible for coordinating the Board model, the View of the board, and
-the AI Controller(s) responsible for instructing how to change the board state.
+date: 11/26/2014
 '''
 __author__ = "Carlos Lemus, David Shuckerow"
 __license__ = "MIT"
 
-import board
 
-
-class Mediator:
+class Mediator(object):
     """
-    Stub for now.
+    The Mediator abstract class implements the mediator design pattern.
+    It is responsible for coordinating the Board model, the View of the board, and
+    the AI Controller(s) responsible for instructing how to change the board state.
+
+    Any Mediator must at least have a set_state and a update_ui function implemented.
     """
-    def __init__(self):
-        self.gameBoard = board.Board(2, 2)
 
-    def main(self):
-        pass
+    def __init__(self, game_board, user_interface):
+        raise NotImplementedError("Mediator.__init__: function not implemented.")
 
-    def setState(self, player, square):
+    def set_state(self, player, row, col):
         """
+        :param row: row to move from.
+        :param col: column to move from.
         :param player: the number of the player (integer 0 or 1)
-        :param square: the square from which to begin the move (in range(0,n))
-        Validate the player and square to be valid and then move.
-        If the move is not valid, then return False.
-        If the move is valid, then perform the move and return True.
         """
-        self.gameBoard.move(player, square)
-        return True
+        raise NotImplementedError("Mediator.set_state: function not implemented.")
 
-if __name__ == '__main__':
-    Mediator().main()
+    def update_ui(self):
+        raise NotImplementedError("Mediator.update_ui: function not implemented.")
