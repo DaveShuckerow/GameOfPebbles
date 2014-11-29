@@ -1,8 +1,8 @@
-'''
+"""
 Mediator.py
 by: David Shuckerow (djs0017@auburn.edu) and Carlos Lemus (cal0018@auburn.edu)
 date: 11/26/2014
-'''
+"""
 __author__ = "Carlos Lemus, David Shuckerow"
 __license__ = "MIT"
 
