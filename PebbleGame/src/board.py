@@ -39,11 +39,16 @@ class Board(object):
             self.squares[row][col] += 1
             self.pebbles -= 1
 
+    # Assistant Functions #
+
     def copy(self):
         """ Return a deep copy of the Board for simulation/lookahead"""
         copy_board = Board(self._squareCount, self._pebbleCount)
         copy_board.squares = [list(row) for row in self.squares]
         return copy_board
+
+    def get_squares_per_player(self):
+        return self._squareCount
 
     def get_score(self, player):
         pass

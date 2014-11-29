@@ -13,8 +13,6 @@ class BoardMediator(Mediator):
     """ Board implementation of Mediator abstract class """
 
     def __init__(self, game_board, user_interface):
-        # TODO: object UI can be used to call ui updates?
-        self.ui = user_interface
         self.board = game_board
 
     def main(self):
