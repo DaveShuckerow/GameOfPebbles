@@ -9,8 +9,9 @@ __author__ = "Carlos Lemus, David Shuckerow"
 __license__ = "MIT"
 
 class Player(object):
-    def __init__(self, mediator):
+    def __init__(self, mediator, playerID):
         self.mediator = mediator
+        self.playerID = playerID
 
     def play(self, board):
         # display UI for human player, set state depending on UI choice

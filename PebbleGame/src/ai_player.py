@@ -4,10 +4,11 @@ from PebbleGame.src.player import Player as Player
 
 
 class AIPlayer(Player):
-    def __init__(self, mediator):
+
+    def __init__(self, mediator, playerID):
         self.MAX_DEPTH = 3
         self.state_table = dict()
-        super(AIPlayer, self).__init__(mediator)
+        super(AIPlayer, self).__init__(mediator, playerID)
 
     def play(self):
         pass
@@ -33,3 +34,19 @@ class AIPlayer(Player):
             return True
         else:
             return False
+
+    def defensive_heuristic(self, board):
+        ''' returns value of players right-most square as a heuristic value '''
+        right_sq_col = 0
+        if self.playerID != 0:
+            right_sq_col = board._squareCount-1
+
+        return board.squares[self.playerID][right_sq_col]
+
+    def aggressive_heuristic(self, board):
+        ''' returns value of players left-most square as a heuristic value '''
+        left_sq_col = 0
+        if self.playerID == 0:
+            left_sq_col = board._squareCount-1
+
+        return board.squares[self.playerID][left_sq_col]
