@@ -12,7 +12,7 @@ from PebbleGame.src.board import Board as Board
 
 class AIPlayer_Test(unittest.TestCase):
     def setUp(self):
-        self.test_ai_player = AIPlayer(mediator=None, playerID=0)
+        self.test_ai_player = AIPlayer(playerID=0, mediator=None)
         self.test_board = Board(2, 2)
 
     def test_terminaltest_correct1(self):
@@ -94,5 +94,48 @@ class AIPlayer_Test(unittest.TestCase):
             self.assertEqual(heuristic_result, 2,
                              "AIPlayer.aggressive_heuristic: aggressive heuristic value returned is invalid. Expected: "
                              + str(2) + " but got " + str(heuristic_result) + ".")
+
+    def test_result1_p0(self):
+        ''' test result function for player 0 '''
+        test_board = Board(2, 2)
+        new_board = self.test_ai_player.result(test_board, 0)
+
+        expected = [[0, 3], [2, 3]]
+        self.assertEqual(new_board.squares, expected,
+                         "AIPlayer.result: Expected board " + str(expected) + " but got "
+                         + str(new_board.squares))
+
+    def test_result2_p0(self):
+        ''' test result function for player 0 '''
+        test_board = Board(2, 2)
+        new_board = self.test_ai_player.result(test_board, 1)
+
+        expected = [[2, 0], [3, 3]]
+        self.assertEqual(new_board.squares, expected,
+                         "AIPlayer.result: Expected board " + str(expected) + " but got "
+                         + str(new_board.squares))
+
+    def test_result1_p1(self):
+        ''' test result function for player 1 '''
+        self.test_ai_player.playerID = 1
+        test_board = Board(2, 2)
+        new_board = self.test_ai_player.result(test_board, 0)
+
+        expected = [[3, 3], [0, 2]]
+        self.assertEqual(new_board.squares, expected,
+                         "AIPlayer.result: Expected board " + str(expected) + " but got "
+                         + str(new_board.squares))
+
+    def test_result2_p1(self):
+        ''' test result function for player 1 '''
+        self.test_ai_player.playerID = 1
+        test_board = Board(2, 2)
+        new_board = self.test_ai_player.result(test_board, 1)
+
+        expected = [[3, 2], [3, 0]]
+        self.assertEqual(new_board.squares, expected,
+                         "AIPlayer.result: Expected board " + str(expected) + " but got "
+                         + str(new_board.squares))
+
 if __name__ == '__main__':
     unittest.main()
