@@ -1,0 +1,33 @@
+#:kivy 1.8.0
+
+
+<PebbleGame>:
+    board_renderer: boardrend
+    Label:
+        font_size: 70
+        center_x: root.width/2
+        center_y: 3*root.height/4
+        text: "Hello, Pebbles!"
+    BoardRenderer:
+        id: boardrend
+        center: self.parent.center
+
+<BoardRenderer>:
+    scale: 75
+    size: self.scale*self.square_count, self.scale*2
+
+
+<Pebble>:
+    radius: 8
+    size: self.radius*2, self.radius*2
+    canvas:
+        Color:
+            rgba: 0.2, 1., 0.2, 0.2
+        Ellipse:
+            pos: self.x, self.y
+            size: self.radius*2, self.radius*2
+        Color: 
+            rgba: 0.2, 1., 0.2, 1.
+        Line:
+            width: 1
+            circle: self.center_x, self.center_y, self.radius
