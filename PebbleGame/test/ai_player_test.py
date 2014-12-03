@@ -8,6 +8,7 @@ import unittest
 
 from PebbleGame.src.ai_player import AIPlayer as AIPlayer
 from PebbleGame.src.board import Board as Board
+from PebbleGame.src.board_mediator import BoardMediator
 
 
 class AIPlayer_Test(unittest.TestCase):
@@ -77,28 +78,28 @@ class AIPlayer_Test(unittest.TestCase):
                          + str(5) + " but got " + str(heuristic_result) + ".")
 
     def test_aggressive_heuristic_p0(self):
-            '''tests the aggressive heuristic for default player 0'''
-            self.test_board.squares = [[1, 0], [2, 5]]
-            heuristic_result = self.test_ai_player.aggressive_heuristic(self.test_board)
+        '''tests the aggressive heuristic for default player 0'''
+        self.test_board.squares = [[1, 0], [2, 5]]
+        heuristic_result = self.test_ai_player.aggressive_heuristic(self.test_board)
 
-            self.assertEqual(heuristic_result, 0,
-                             "AIPlayer.aggressive_heuristic: aggressive heuristic value returned is invalid. Expected: "
-                             + str(0) + " but got " + str(heuristic_result) + ".")
+        self.assertEqual(heuristic_result, 0,
+                         "AIPlayer.aggressive_heuristic: aggressive heuristic value returned is invalid. Expected: "
+                         + str(0) + " but got " + str(heuristic_result) + ".")
 
     def test_aggressive_heuristic_p1(self):
-            '''tests the aggressive heuristic for default player 0'''
-            self.test_ai_player.playerID = 1
-            self.test_board.squares = [[1, 0], [2, 5]]
-            heuristic_result = self.test_ai_player.aggressive_heuristic(self.test_board)
+        '''tests the aggressive heuristic for default player 0'''
+        self.test_ai_player.playerID = 1
+        self.test_board.squares = [[1, 0], [2, 5]]
+        heuristic_result = self.test_ai_player.aggressive_heuristic(self.test_board)
 
-            self.assertEqual(heuristic_result, 2,
-                             "AIPlayer.aggressive_heuristic: aggressive heuristic value returned is invalid. Expected: "
-                             + str(2) + " but got " + str(heuristic_result) + ".")
+        self.assertEqual(heuristic_result, 2,
+                         "AIPlayer.aggressive_heuristic: aggressive heuristic value returned is invalid. Expected: "
+                         + str(2) + " but got " + str(heuristic_result) + ".")
 
     def test_result1_p0(self):
         ''' test result function for player 0 '''
         test_board = Board(2, 2)
-        new_board = self.test_ai_player.result(test_board, 0)
+        new_board = self.test_ai_player.result(test_board, self.test_ai_player.playerID, 0)
 
         expected = [[0, 3], [2, 3]]
         self.assertEqual(new_board.squares, expected,
@@ -108,7 +109,7 @@ class AIPlayer_Test(unittest.TestCase):
     def test_result2_p0(self):
         ''' test result function for player 0 '''
         test_board = Board(2, 2)
-        new_board = self.test_ai_player.result(test_board, 1)
+        new_board = self.test_ai_player.result(test_board, self.test_ai_player.playerID, 1)
 
         expected = [[2, 0], [3, 3]]
         self.assertEqual(new_board.squares, expected,
@@ -119,7 +120,7 @@ class AIPlayer_Test(unittest.TestCase):
         ''' test result function for player 1 '''
         self.test_ai_player.playerID = 1
         test_board = Board(2, 2)
-        new_board = self.test_ai_player.result(test_board, 0)
+        new_board = self.test_ai_player.result(test_board, self.test_ai_player.playerID, 0)
 
         expected = [[3, 3], [0, 2]]
         self.assertEqual(new_board.squares, expected,
@@ -130,12 +131,34 @@ class AIPlayer_Test(unittest.TestCase):
         ''' test result function for player 1 '''
         self.test_ai_player.playerID = 1
         test_board = Board(2, 2)
-        new_board = self.test_ai_player.result(test_board, 1)
+        new_board = self.test_ai_player.result(test_board, self.test_ai_player.playerID, 1)
 
         expected = [[3, 2], [3, 0]]
         self.assertEqual(new_board.squares, expected,
                          "AIPlayer.result: Expected board " + str(expected) + " but got "
                          + str(new_board.squares))
+
+    def test_play_defensive_heuristic(self):
+        '''
+        This test will start off with a 2x2 board with 2 pebbles in each square. The AI should decide that moving its
+        left-hand square (0, 1) is the best choice--resulting in a heuristic value of 3. This will result in a new board
+        with contents [2,0][3,3].
+        '''
+        expectedBoard = Board(2, 2)
+        expectedBoard.squares = [[2, 0], [3, 3]]
+
+        # create a mediator
+        mediator = BoardMediator(self.test_board, None)
+
+        # initialize an ai player with the new mediator
+        mediated_AI = AIPlayer(0, mediator, 0)
+
+        mediated_AI.play()
+
+        self.assertEqual(mediator.board.squares, expectedBoard.squares, "AIPlayer.play: expected move not made by "
+                                                                        "AI using heuristic 1. Expected " + str(
+            expectedBoard.squares) + " but got " + str(mediator.board.squares))
+
 
 if __name__ == '__main__':
     unittest.main()

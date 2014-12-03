@@ -23,6 +23,7 @@ class BoardMediator(Mediator):
         """Validate the player and square combination. Move if valid """
         if self.validate_move(player, row):
             self.board.move(row, col)
+            #TODO: update ui
             return True
         else:
             return False
