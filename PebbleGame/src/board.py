@@ -15,7 +15,7 @@ class Board(object):
 
     def __init__(self, n, p):
         self._squareCount, self._pebbleCount = n, p
-        self.squares = [[p for _ in range(2)] for _ in range(n)]
+        self.squares = [[p for _ in range(n)] for _ in range(2)]
         self.pebbles = 0
 
     def move(self, row, col):
@@ -51,4 +51,12 @@ class Board(object):
         return self._squareCount
 
     def get_score(self, player):
-        pass
+        return sum(self.squares[player])
+
+    def __hash__(self):
+        num = 1
+        for r in self.squares:
+            for p in r:
+                num *= self._squareCount*self._pebbleCount+1
+                num += p
+        return num

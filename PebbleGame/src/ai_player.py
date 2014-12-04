@@ -5,15 +5,16 @@ from PebbleGame.src.player import Player as Player
 
 class AIPlayer(Player):
     def __init__(self, playerID, mediator, preferred_heuristic=0):
-        self.MAX_DEPTH = 3
+        self.MAX_DEPTH = 20
         self.state_table = dict()
 
         self.preferred_heuristic = preferred_heuristic
-        self.heuristics_list = [self.defensive_heuristic, self.aggressive_heuristic]
+        self.heuristics_list = [self.defensive_heuristic, self.aggressive_heuristic, self.total_heuristic]
 
         super(AIPlayer, self).__init__(mediator, playerID)
 
     def play(self):
+        self.state_table = dict()
         best_move = self.max_value(self.mediator.board, float("-inf"), float("inf"))[1]
 
         self.mediator.set_state(self.playerID, self.playerID, best_move)
@@ -22,15 +23,19 @@ class AIPlayer(Player):
         if self.cutoff_test(board, current_depth):
             if board in self.state_table:
                 return self.state_table[board]
-
             return self.heuristics_list[self.preferred_heuristic](board), None
 
         v = float("-inf")
         best_branch = 0
 
         for current_column in range(0, board._squareCount):
-            v = max(v, self.min_value(self.result(board, self.playerID % 2, current_column), alpha, beta,
-                                      current_depth + 1))
+            if board.squares[self.playerID][current_column] == 0:
+                continue
+
+            potential_max_value = self.min_value(self.result(board, self.playerID, current_column), alpha, beta,
+                                                     current_depth + 1)
+
+            v = max(v, potential_max_value)
 
             # if V is higher than the lowest known potential value
             if v >= beta:
@@ -40,23 +45,23 @@ class AIPlayer(Player):
                 alpha = v
                 best_branch = current_column
 
-        self.state_table[board] = v
+        self.state_table[board] = (v, best_branch)
         return v, best_branch
 
     def min_value(self, board, alpha, beta, current_depth=0):
-        if self.cutoff_test(board, current_depth):
-            if board in self.state_table:
-                return self.state_table[board]
-
+        if self.min_cutoff_test(board, current_depth):
             return self.heuristics_list[self.preferred_heuristic](board)
 
         v = float("inf")
 
         for current_column in range(0, board._squareCount):
-            max_known_value = self.max_value(self.result(board, (self.playerID + 1) % 2, current_column), alpha, beta,
-                                             current_depth + 1)
+            if board.squares[self.playerID][current_column] == 0:
+                continue
 
-            v = min(v, max_known_value[0])
+            potential_min_value = self.max_value(self.result(board, (self.playerID + 1) % 2, current_column), alpha,
+                                                 beta, current_depth + 1)
+
+            v = min(v, potential_min_value[0])
 
             # if V is lower than highest known value
             if v <= alpha:
@@ -74,8 +79,7 @@ class AIPlayer(Player):
         return board_copy
 
     def terminal_test(self, board):
-        return (board.squares[0][0] == 0 and board.squares[0][1] == 0) \
-               or (board.squares[1][0] == 0 and board.squares[1][1] == 0)
+        return sum(board.squares[0]) == 0 or sum(board.squares[1]) == 0
 
     def cutoff_test(self, board, depth):
         """
@@ -95,9 +99,24 @@ class AIPlayer(Player):
         else:
             return False
 
+    def min_cutoff_test(self, board, depth):
+        """
+        Determines if the AI should stop exploring the decision tree by checking
+        for terminal states, maximum exploration depth, or previous decision knowledge.
+
+        :param board: board containing current state
+        :param depth: the maximum depth the decision tree should be explored
+        :return: whether the AI should stop exploring the decision tree.
+        """
+        if self.terminal_test(board):
+            return True
+        elif depth == self.MAX_DEPTH:
+            return True
+        else:
+            return False
+
     def defensive_heuristic(self, board):
         ''' returns value of players right-most square as a heuristic value '''
-
         right_sq_col = 0
         if self.playerID != 0:
             right_sq_col = board._squareCount - 1
@@ -111,3 +130,6 @@ class AIPlayer(Player):
             left_sq_col = board._squareCount - 1
 
         return board.squares[self.playerID][left_sq_col]
+
+    def total_heuristic(self, board):
+        return board.squares[self.playerID][0] + board.squares[self.playerID][1]
