@@ -1,0 +1,145 @@
+#:kivy 1.8.0
+<PebbleGame>:
+    board_renderer: boardrend
+    quit_button: qb
+    cont_button: cb
+    Label:
+        font_size: 40
+        center_x: root.width/2
+        top: root.height
+        color: 0.2, 1.0, 0.2, 0.5
+        text: "Player 0: {} points".format(root.p0_score)
+    Label:
+        font_size: 40
+        center_x: root.width/2
+        bottom: 0
+        color: 0.2, 1.0, 0.2, 0.5
+        text: "Player 1: {} points".format(root.p1_score)
+    Button:
+        opacity: 0.0
+        disabled: True
+        id: cb
+        size_hint: root.width/4, root.height/8
+        center_x: root.width/2
+        center_y: root.height/4
+        text: "Continue"
+        on_press: root.ai_move()
+    Button:
+        opacity: 0.0
+        disabled: True
+        id: qb
+        size_hint: root.width/4, root.height/8
+        center_x: root.width/2
+        center_y: 3*root.height/4
+        text: "End Game"
+        on_press: root.parent.game_over()
+    BoardRenderer:
+        id: boardrend
+        center: self.parent.center
+
+<BoardRenderer>:
+    scale: 75
+    size: self.scale*self.square_count, self.scale*2
+
+<Square>:
+    play_intensity: 0
+    min_intensity: 0
+    canvas:
+        Color:
+            rgba: 1.0, 0.2, 0.2, self.play_intensity
+        Rectangle:
+            pos: root.pos
+            size: root.size
+    Label:
+        center: root.center
+        text: str(root.row)+" "+str(root.col)
+
+<Pebble>:
+    radius: 8
+    size: self.radius*2, self.radius*2
+    canvas:
+        Color:
+            rgba: 0.2, 1., 0.2, 0.2
+        Ellipse:
+            pos: self.x, self.y
+            size: self.radius*2, self.radius*2
+        Color: 
+            rgba: 0.2, 1., 0.2, 1.
+        Line:
+            width: 1
+            circle: self.center_x, self.center_y, self.radius
+
+
+<PebbleTitle>:
+    pebble_count: pebslider.value
+    square_count: squslider.value
+    ply_count: plyslider.value
+    GridLayout:
+        size: root.width, root.height
+        cols: 1
+        Label:
+            size_hint: 1, 0.2
+            font_size: 60
+            text: "[b]Pebble Game[/b]"
+            markup: True
+        Label:
+            size_hint: 1, 0.1
+            font_size: 30
+            text: "By Carlos Lemus & David Shuckerow"            
+        GridLayout:
+            size_hint: 1, 0.35
+            cols: 2
+            Label:
+                size_hint: 0.25, 1
+                text: "Squares per player: "+str(root.square_count)
+            Slider:
+                id: squslider
+                size_hint: 0.75, 1
+                value: 2
+                range: 2, 10
+                step: 1
+            Label:
+                size_hint: 0.25, 1
+                text: "Pebbles per square: "+str(root.pebble_count)
+            Slider:
+                id: pebslider
+                size_hint: 0.75, 1
+                value: 2
+                range: 1, 10
+                step: 1
+            Label:
+                size_hint: 0.25, 1
+                text: "\u0391\u0392 Plys: "+str(root.ply_count)
+            Slider:
+                id: plyslider
+                size_hint: 0.75, 1
+                value: 10
+                range: 1, 20
+                step: 1
+        Button:
+            size_hint: 1, 0.15
+            font_size: 30
+            text: "Start Game"
+            on_press: root.play_game()
+        GridLayout:
+            size_hint: 1, 0.2
+            cols: 3
+            Button:
+                text: "Player 0: "+root.player_modes[root.player0_mode]
+                font_size: 18
+                on_press: root.inc_player0()
+            Button:
+                text: "Game Play Mode: "+root.run_modes[root.run_mode]
+                font_size: 18
+                on_press: root.inc_run_mode()
+            Button:
+                text: "Player 1: "+root.player_modes[root.player1_mode]
+                font_size: 18
+                on_press: root.inc_player1()
+
+<Label>:
+    font_name: "lucon.ttf"
+
+<Button>:
+    font_name: "lucon.ttf"
+    background_color: 0.2, 0.2, 1.0, 0.8
