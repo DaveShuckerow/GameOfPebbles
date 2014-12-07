@@ -2,6 +2,10 @@ __author__ = "Carlos Lemus (cal0018@auburn.edu)"
 
 from PebbleGame.src.player import Player as Player
 
+DEFENSIVE = 0
+AGGRESSIVE = 1
+TOTAL = 2
+ANDOR = 3
 
 class AIPlayer(Player):
     def __init__(self, playerID, mediator, preferred_heuristic=0, play_strategy=0, max_depth=20):

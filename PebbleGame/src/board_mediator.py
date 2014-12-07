@@ -14,6 +14,7 @@ class BoardMediator(Mediator):
 
     def __init__(self, game_board, user_interface):
         self.board = game_board
+        self.ui = user_interface
 
     def main(self):
         """ Filler """
@@ -23,7 +24,7 @@ class BoardMediator(Mediator):
         """Validate the player and square combination. Move if valid """
         if self.validate_move(player, row):
             self.board.move(row, col)
-            #TODO: update ui
+            self.ui.update(player, row, col)
             return True
         else:
             return False

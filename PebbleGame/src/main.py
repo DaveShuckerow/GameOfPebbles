@@ -282,20 +282,22 @@ class PebbleTitle(Screen):
     run_modes = ListProperty(["Run", "Step"])
     run_mode = BoundedNumericProperty(0, min=0, max=1)
     player_modes = ListProperty(["Human", "Aggressive \u0391\u0392", "Defenseive \u0391\u0392", "Total \u0391\u0392", "And-Or Search"])
-    player0_mode = BoundedNumericProperty(1, min=0, max=3)
-    player1_mode = BoundedNumericProperty(2, min=0, max=3)
+    player0_mode = BoundedNumericProperty(2, min=0, max=4)
+    player1_mode = BoundedNumericProperty(1, min=0, max=4)
 
     def play_game(self, *args):
         gameboard = board.Board(self.square_count, self.pebble_count)
         med = board_mediator.BoardMediator(gameboard, None)
         ai0, ai1 = None, None
         ais = [ai_player.AGGRESSIVE, ai_player.DEFENSIVE, ai_player.TOTAL]
-        if self.player0_mode > 0:
-            ai0 = ai_player.AIPlayer(0, med, ais[self.player0_mode-1])
-            ai0.MAX_DEPTH = self.ply_count
-        if self.player1_mode > 0:
-            ai1 = ai_player.AIPlayer(1, med, ais[self.player1_mode-1])
-            ai1.MAX_DEPTH = self.ply_count
+        if self.player0_mode > 0 and self.player0_mode < 3:
+            ai0 = ai_player.AIPlayer(0, med, ais[self.player0_mode-1], max_depth=self.ply_count)
+        elif self.player0_mode >= 3:
+            ai0 = ai_player.AIPlayer(0, med, play_strategy=1, max_depth=self.ply_count)
+        if self.player1_mode > 0 and self.player1_mode < 3:
+            ai1 = ai_player.AIPlayer(1, med, ais[self.player1_mode-1], max_depth=self.ply_count)
+        elif self.player1_mode >= 3:
+            ai1 = ai_player.AIPlayer(1, med, play_strategy=1, max_depth=self.ply_count)
         mode = 0
         if self.player0_mode != 0 and self.player1_mode != 0:
             mode = self.run_mode
@@ -306,10 +308,10 @@ class PebbleTitle(Screen):
         self.manager.current = self.manager.next()
 
     def inc_player0(self, *args):
-        self.player0_mode = self.player0_mode+1 if self.player0_mode < 3 else 0
+        self.player0_mode = self.player0_mode+1 if self.player0_mode < 4 else 0
 
     def inc_player1(self, *args):
-        self.player1_mode = self.player1_mode+1 if self.player1_mode < 3 else 0
+        self.player1_mode = self.player1_mode+1 if self.player1_mode < 4 else 0
 
     def inc_run_mode(self, *args):
         self.run_mode = self.run_mode+1 if self.run_mode < 1 else 0
