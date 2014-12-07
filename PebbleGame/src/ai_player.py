@@ -4,8 +4,11 @@ from PebbleGame.src.player import Player as Player
 
 
 class AIPlayer(Player):
-    def __init__(self, playerID, mediator, preferred_heuristic=0):
-        self.MAX_DEPTH = 20
+    def __init__(self, playerID, mediator, preferred_heuristic=0, play_strategy=0, max_depth=20):
+        self.play_strategy = play_strategy
+        self.plan = dict()
+
+        self.max_depth = max_depth
         self.state_table = dict()
 
         self.preferred_heuristic = preferred_heuristic
@@ -14,16 +17,27 @@ class AIPlayer(Player):
         super(AIPlayer, self).__init__(mediator, playerID)
 
     def play(self):
-        self.state_table = dict()
-        best_move = self.max_value(self.mediator.board, float("-inf"), float("inf"))[1]
+        best_move = 0
+        if self.play_strategy == 0:
+            self.state_table = dict()
+            best_move = self.max_value(self.mediator.board, float("-inf"), float("inf"))[1]
+        else:
+            self.plan = dict()
+            path = dict()
+            self.or_search(self.mediator.board, path)
+
+            best_move = self.plan[self.mediator.board]
 
         self.mediator.set_state(self.playerID, self.playerID, best_move)
+
 
     def max_value(self, board, alpha, beta, current_depth=0):
         if self.cutoff_test(board, current_depth):
             if board in self.state_table:
                 return self.state_table[board]
             return self.heuristics_list[self.preferred_heuristic](board), None
+
+        self.state_table[board] = (float("-inf"), None)
 
         v = float("-inf")
         best_branch = 0
@@ -33,7 +47,7 @@ class AIPlayer(Player):
                 continue
 
             potential_max_value = self.min_value(self.result(board, self.playerID, current_column), alpha, beta,
-                                                     current_depth + 1)
+                                                 current_depth + 1)
 
             v = max(v, potential_max_value)
 
@@ -71,6 +85,42 @@ class AIPlayer(Player):
 
         return v
 
+    def or_search(self, board, path):
+        # print("OR_SEARCHing: " + str(board.squares))
+
+        if self.victory_test(board):
+            return True
+
+        # watch for loops
+        if hash(board) in path:
+            return False
+
+        path[hash(board)] = True
+
+        for column in range(0, board._squareCount):
+            if board.squares[self.playerID][column] == 0:
+                continue
+
+            valid_in_plan = self.and_search(self.result(board, self.playerID, column), path)
+            if valid_in_plan:
+                self.plan[board] = column
+                return True
+
+        return False
+
+    def and_search(self, board, path):
+        # print("AND_SEARCHing: " + str(board.squares))
+        for column in range(0, board._squareCount):
+            if board.squares[(self.playerID + 1) % 2][column] == 0:
+                continue
+            # is there at least one move by the opponent that will lead to victory?
+            # >>or is there at least one move by the opponent that will lead to loss?
+            valid_in_plan = self.or_search(self.result(board, (self.playerID + 1) % 2, column), path)
+            if valid_in_plan:
+                return True
+
+        return False
+
 
     def result(self, board, current_player, column_number):
         board_copy = board.copy()
@@ -80,6 +130,10 @@ class AIPlayer(Player):
 
     def terminal_test(self, board):
         return sum(board.squares[0]) == 0 or sum(board.squares[1]) == 0
+
+    def victory_test(self, board):
+        # sum of opponent's squares == 0
+        return sum(board.squares[(self.playerID + 1) % 2]) == 0
 
     def cutoff_test(self, board, depth):
         """
@@ -92,7 +146,7 @@ class AIPlayer(Player):
         """
         if self.terminal_test(board):
             return True
-        elif depth == self.MAX_DEPTH:
+        elif depth == self.max_depth:
             return True
         elif board in self.state_table:
             return True
@@ -110,7 +164,7 @@ class AIPlayer(Player):
         """
         if self.terminal_test(board):
             return True
-        elif depth == self.MAX_DEPTH:
+        elif depth == self.max_depth:
             return True
         else:
             return False
@@ -133,3 +187,8 @@ class AIPlayer(Player):
 
     def total_heuristic(self, board):
         return board.squares[self.playerID][0] + board.squares[self.playerID][1]
+
+    # CONFIG
+
+    def set_max_search_depth(self, depth):
+        self.max_depth = depth
