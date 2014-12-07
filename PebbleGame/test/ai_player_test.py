@@ -49,7 +49,7 @@ class AIPlayer_Test(unittest.TestCase):
 
     def test_cutofftest_maxdepth(self):
         ''' Use maximum depth '''
-        self.assertTrue(self.test_ai_player.cutoff_test(self.test_board, self.test_ai_player.MAX_DEPTH),
+        self.assertTrue(self.test_ai_player.cutoff_test(self.test_board, self.test_ai_player.max_depth),
                         "AIPlayer.cutoff_test: function did not return True for non-terminal board and maximum depth.")
 
     def test_cutofftest_terminalboard(self):
@@ -152,7 +152,7 @@ class AIPlayer_Test(unittest.TestCase):
 
         # initialize an ai player with the new mediator
         mediated_AI = AIPlayer(0, mediator, 0)
-
+        mediated_AI.set_max_search_depth(3)
         mediated_AI.play()
 
         self.assertEqual(mediator.board.squares, expectedBoard.squares, "AIPlayer.play: expected move not made by "
